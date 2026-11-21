@@ -42,8 +42,13 @@ for name, symbol in tickers.items():
             print(f"{name} 沒有取得資料")
             continue
 
-        # 網站使用每月最後一個交易日價格
-        monthly = history["Close"].resample("ME").last().dropna()
+# 使用每月最後一個實際交易日的收盤價格
+monthly = (
+    history["Close"]
+    .groupby(history.index.strftime("%Y-%m"))
+    .tail(1)
+    .dropna()
+)
 
         currency = "TWD" if symbol.endswith(".TW") else "USD"
 
